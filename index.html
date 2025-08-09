@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connectance - Dashboard App Soci</title>
+    <!-- Carica Tailwind CSS dal CDN per uno stile responsive e moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Stile personalizzato per il font Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #2D3748; /* Colore di sfondo scuro di base */
+            color: #e2e8f0; /* Colore testo chiaro */
+            background-image: url('immagini/Sfondo-ConnectanceETS-Zoom_2.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        .link-button {
+            /* Stili per i pulsanti */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem; /* p-6 */
+            background-color: #5d021c; /* Rosso scuro per i pulsanti */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+            transition: all 0.3s ease-in-out; /* transition-all duration-300 */
+            transform: scale(1);
+        }
+        .link-button:hover {
+            transform: scale(1.05);
+            background-color: #9c0c32; /* Rosso più chiaro al passaggio del mouse */
+        }
+        .link-button span {
+            /* Stili per il testo del pulsante */
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #ffffff; /* Testo bianco per i pulsanti */
+            transition: color 0.3s ease-in-out;
+        }
+        .link-button:hover span {
+            color: #ffffff; /* Testo rimane bianco al passaggio del mouse */
+        }
+        .link-button img {
+            /* Stili per le immagini del pulsante */
+            width: 6rem; /* w-24 */
+            height: 6rem; /* h-24 */
+            margin-bottom: 0.5rem; /* mb-2 */
+            filter: grayscale(0%);
+            transition: filter 0.3s ease-in-out;
+        }
+        /* Media query per dispositivi mobili */
+        @media (max-width: 640px) {
+            .link-button {
+                padding: 1rem;
+            }
+            .link-button img {
+                width: 4rem; /* w-16 */
+                height: 4rem; /* h-16 */
+            }
+            .link-button span {
+                font-size: 1rem; /* text-base */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Contenitore principale dell'applicazione -->
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-gray-800 bg-opacity-75 p-8 md:p-12 rounded-lg shadow-2xl w-full max-w-5xl">
+            <!-- Intestazione -->
+            <div class="text-center mb-8">
+                <img src="immagini/Logo ETS.png" alt="Logo ETS" class="mx-auto w-48 mb-4">
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-2">Dashboard App Soci</h1>
+            </div>
+
+            <!-- Contenitore dinamico per le sezioni -->
+            <div id="content-container">
+                <!-- La dashboard iniziale verrà caricata qui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale per gli avvisi, rimane fuori dal contenitore dinamico -->
+    <div id="alertModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-2xl w-11/12 max-w-md text-center">
+            <h3 id="modalTitle" class="text-2xl font-bold mb-4 text-white">Avviso</h3>
+            <p id="modalMessage" class="mb-6 text-gray-300"></p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="closeModal()" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition">Chiudi</button>
+                <a id="modalLink" href="#" target="_blank" onclick="closeModal()" class="px-6 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-500 transition">Apri Link</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * @fileoverview Gestione dei link e degli avvisi per l'applicazione Connectance.
+         * Questo script gestisce l'apertura dei link e visualizza avvisi specifici
+         * in base al tipo di risorsa (Google, Automatic Forms, o altro).
+         */
+
+        // Funzione per mostrare la modale con l'avviso
+        function openLinkWithWarning(url, type) {
+            const modal = document.getElementById('alertModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalLink = document.getElementById('modalLink');
+
+            if (type === 'google') {
+                modalTitle.textContent = 'Avviso per risorsa Google';
+                modalMessage.textContent = 'Per usufruire di tutte le funzionalità, è necessario effettuare il login con l\'email "Connectance".';
+            } else if (type === 'forms') {
+                modalTitle.textContent = 'Avviso per Automatic Forms';
+                modalMessage.textContent = 'Per utilizzare questa funzionalità, è necessario registrarsi sull\'app. Tutto funziona secondo un tutorial per creare i Test di Kolb.';
+            } else {
+                window.open(url, '_blank');
+                return; // Esce dalla funzione per non mostrare la modale per link di tipo 'other'
+            }
+
+            modalLink.href = url; // Imposta l'URL del pulsante "Apri Link"
+            modal.classList.remove('hidden'); // Mostra la modale
+        }
+
+        // Funzione per chiudere la modale
+        function closeModal() {
+            const modal = document.getElementById('alertModal');
+            modal.classList.add('hidden');
+        }
+
+        // Funzione per caricare dinamicamente il contenuto
+        function loadPage(pageName) {
+            const container = document.getElementById('content-container');
+            let content = '';
+
+            switch (pageName) {
+                case 'dashboard':
+                    content = `
+                        <div class="mb-12">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-200 mb-6 border-b-2 border-red-600 pb-2">Strumenti Principali</h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <button onclick="loadPage('associazione')" class="link-button">
+                                    <img src="immagini/soci.png" alt="Associazione Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Associazione</span>
+                                </button>
+                                <button onclick="loadPage('sharing')" class="link-button">
+                                    <img src="immagini/sharing.png" alt="Sharing Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Sharing</span>
+                                </button>
+                                <button onclick="loadPage('materiali')" class="link-button">
+                                    <img src="immagini/materiali.png" alt="Materiali Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Materiali</span>
+                                </button>
+                                <button onclick="loadPage('test')" class="link-button">
+                                    <img src="immagini/onlinetest.png" alt="Test Online Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Test online</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/GNZPE9', 'google')" class="link-button">
+                                    <img src="immagini/gcalendar.png" alt="Eventi Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Eventi</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLScN8S7bwpO1qEm9sXf55xM3nluSoE4XgSXDX2tEVRYYVcZkgg/viewform', 'google')" class="link-button">
+                                    <img src="immagini/suggerimenti_viola.png" alt="Suggerimenti Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Suggerimenti</span>
+                                </button>
+                                <button onclick="loadPage('tools')" class="link-button">
+                                    <img src="immagini/tools.png" alt="Tools Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Tools</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'associazione':
+                    content = `
+                        <div class="mb-8">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-200 mb-6 border-b-2 border-red-600 pb-2">Associazione</h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <button onclick="loadPage('dashboard')" class="link-button">
+                                    <img src="immagini/logo.png" alt="Homepage Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Homepage</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/a/connectance.net/forms/d/e/1FAIpQLSfVxa_TPxI6kbKM71Q-cnQlby9JkyHbqJlx7BPOtkQXPwb-AQ/viewform', 'google')" class="link-button">
+                                    <img src="immagini/communication.png" alt="Comunicazioni Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Comunicazioni</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/a/connectance.net/forms/d/e/1FAIpQLScLozSanf4aF3smodWDWe2JWpblXaCUmDFSZI9vzSOwzVj5dg/viewform#responses', 'google')" class="link-button">
+                                    <img src="immagini/photoface.png" alt="Foto Associato Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Foto associato</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/a/connectance.net/forms/d/e/1FAIpQLSfpk4h3LY55q4SseY7ge0H43aywJrDXoysM-F01Awm7FULmHw/viewform', 'google')" class="link-button">
+                                    <img src="immagini/datimod.png" alt="Modifica Dati Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Modifica dati</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/Z9agMn', 'other')" class="link-button">
+                                    <img src="immagini/fourhandspact45.png" alt="Codice Etico Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Codice Etico</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLSeIrjMwTP0Jbm6EhL644RnP4xX1NAGxGfAMv8SqU9jlZ7N-7A/viewform', 'google')" class="link-button">
+                                    <img src="immagini/kompass_-_rszd_color.png" alt="Help me! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Help me!</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'sharing':
+                    content = `
+                        <div class="mb-8">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-200 mb-6 border-b-2 border-red-600 pb-2">Sharing</h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <button onclick="loadPage('dashboard')" class="link-button">
+                                    <img src="immagini/logo.png" alt="Homepage Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Homepage</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLScD2KyLtmhraVyr1jfIZfbzqZMSBoYFrNmuX4U3ofCahv0Fkw/viewform', 'google')" class="link-button">
+                                    <img src="immagini/Sharing_Corso.png" alt="Share Activity Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Share activity</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('http://goo.gl/tEjlWV', 'other')" class="link-button">
+                                    <img src="immagini/SharingAlarm.png" alt="Set Alarm Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Set alarm</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/qBytiJ', 'other')" class="link-button">
+                                    <img src="immagini/SharingHistory352px.png" alt="History Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">History</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/GNZPE9', 'google')" class="link-button">
+                                    <img src="immagini/GCalendar.png" alt="Calendar Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Calendar</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLSeUpA-OJg2uWdxJH-OM1AjZPR5ALSyf5InIIzkkw2En3Tt6LA/viewform', 'google')" class="link-button">
+                                    <img src="immagini/Kompass_-_Rszd_Color.png" alt="Help Me! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Help me!</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'materiali':
+                    content = `
+                        <div class="mb-8">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-200 mb-6 border-b-2 border-red-600 pb-2">Materiali formativi</h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <button onclick="loadPage('dashboard')" class="link-button">
+                                    <img src="immagini/logo.png" alt="Homepage Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Homepage</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/92zds9', 'google')" class="link-button">
+                                    <img src="immagini/scheda.png" alt="Crea Scheda Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Crea scheda</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/U2ZVwJ', 'google')" class="link-button">
+                                    <img src="immagini/materialialarm.png" alt="Set Alarm Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Set alarm</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/LSmX94', 'google')" class="link-button">
+                                    <img src="immagini/askforthemoon100px.png" alt="Chiedi la luna! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Chiedi la luna!</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLSfTezo99AXhYbAU1IIGnHdAyQhCqCLeOwYslAldwRTBuj9iVg/viewform', 'google')" class="link-button">
+                                    <img src="immagini/kompass_-_rszd_color.png" alt="Help me! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Help me!</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'test':
+                    content = `
+                        <div class="mb-8">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-200 mb-6 border-b-2 border-red-600 pb-2">Test online</h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <button onclick="loadPage('dashboard')" class="link-button">
+                                    <img src="immagini/logo.png" alt="Homepage Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Homepage</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://drive.google.com/a/connectance.net/file/d/0BxvU16NWrk7hOFhoLWJ4c3ZnR0U/view?usp=sharing', 'google')" class="link-button">
+                                    <img src="immagini/presentazione.png" alt="Presentazione Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Presentazione</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://goo.gl/forms/PMUIEkYao4DZiISY2', 'google')" class="link-button">
+                                    <img src="immagini/test_promotori.png" alt="Test Promotori Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Test Promotori</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://automaticforms.it/product/kolb-test-box-c/', 'forms')" class="link-button">
+                                    <img src="immagini/new_form_2.png" alt="New Test Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">New Test</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://automaticforms.it/my-boxes/', 'forms')" class="link-button">
+                                    <img src="immagini/mixer-new-300x300.png" alt="Dashboard NEW Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Dashboard NEW</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLSdbhvwI6ec-BP9lBeiq7IxR4t80SwfvYrGYsRc2VRFM0GU6yg/viewform', 'google')" class="link-button">
+                                    <img src="immagini/kompass_-_rszd_color.png" alt="Help me! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Help me!</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'tools':
+                    content = `
+                        <div class="mb-8">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-200 mb-6 border-b-2 border-red-600 pb-2">Tools</h2>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+                                <button onclick="loadPage('dashboard')" class="link-button">
+                                    <img src="immagini/logo.png" alt="Homepage Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Homepage</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://www.canva.com/', 'other')" class="link-button">
+                                    <img src="immagini/canva.png" alt="Canva Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Canva</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://www.pexels.com/it-it/', 'other')" class="link-button">
+                                    <img src="immagini/pexels.png" alt="Pexels Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Pexels</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://www.sli.do/', 'other')" class="link-button">
+                                    <img src="immagini/slido.png" alt="Sli.do Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Sli.do</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://kahoot.com/', 'other')" class="link-button">
+                                    <img src="immagini/kahoot.png" alt="Kahoot! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Kahoot!</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://notube.net/it/best-converter-tool', 'other')" class="link-button">
+                                    <img src="immagini/notube.png" alt="NoTube Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">NoTube</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://wordwall.net/it', 'other')" class="link-button">
+                                    <img src="immagini/wordwall.png" alt="WordWall Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">WordWall</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://www.bitpaper.io/', 'other')" class="link-button">
+                                    <img src="immagini/bitpaper.png" alt="BitPaper Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">BitPaper</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://miro.com/', 'other')" class="link-button">
+                                    <img src="immagini/miro.png" alt="Miro Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Miro</span>
+                                </button>
+                                <button onclick="openLinkWithWarning('https://docs.google.com/forms/d/e/1FAIpQLSeUpA-OJg2uWdxJH-OM1AjZPR5ALSyf5InIIzkkw2En3Tt6LA/viewform', 'google')" class="link-button">
+                                    <img src="immagini/kompass_-_rszd_color.png" alt="Help Me! Icona" class="w-16 h-16 md:w-24 md:h-24 mb-2">
+                                    <span class="text-sm md:text-lg">Help me!</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                default:
+                    // Pagina di errore o reindirizzamento alla dashboard
+                    content = `<p class="text-center">Pagina non trovata. Torna alla <a href="#" onclick="loadPage('dashboard')" class="text-red-400 hover:text-red-300 underline">Dashboard</a>.</p>`;
+            }
+            container.innerHTML = content;
+        }
+
+        // Carica la dashboard iniziale al caricamento della pagina
+        window.onload = function() {
+            loadPage('dashboard');
+        };
+    </script>
+</body>
+</html>
